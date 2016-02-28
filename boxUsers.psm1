@@ -4,21 +4,14 @@
     (
         [parameter(Mandatory=$false)]
          [ValidateLength(1,100)]
-         [String]$name=(boxGetDefaultEnv)
+         [String]$env=(boxGetDefaultEnv)
     )
 
     $method = 'Get'
-    $access_token = boxGetAccessToken -name $name
     $resource = '/users/me'
-    $uri = $mybox.ApiBase + $resource
-    $header = New-Object System.Collections.Hashtable
-    $_c = $header.add('Authorization',('Bearer ' + ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($access_token )))))
 
-    Write-Verbose ($header.Authorization)
-
-    $json = Invoke-RestMethod -Method $method -Uri $uri -Headers $header -Verbose -ContentType "application/x-www-form-urlencoded"
-
-    return $json
+    $result = boxApiCall -env $env -method $method -resource $resource -Verbose
+    return $result
 }
 
 function boxGetUser()
@@ -27,7 +20,7 @@ function boxGetUser()
     (
         [parameter(Mandatory=$false)]
          [ValidateLength(1,100)]
-         [String]$name=(boxGetDefaultEnv),
+         [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$false)]
          [ValidateLength(1,100)]
          [String]$userid,
@@ -37,7 +30,7 @@ function boxGetUser()
     )
 
     $method = 'Get'
-    $access_token = boxGetAccessToken -name $name
+
     if ($userid)
     {
         $resource = '/users/' + $userid
@@ -46,15 +39,9 @@ function boxGetUser()
     } else {
         $resource = '/users'
     }
-    $uri = $mybox.ApiBase + $resource
-    $header = New-Object System.Collections.Hashtable
-    $_c = $header.add('Authorization',('Bearer ' + ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($access_token )))))
 
-    Write-Verbose ($header.Authorization)
-
-    $json = Invoke-RestMethod -Method $method -Uri $uri -Headers $header -Verbose -ContentType "application/x-www-form-urlencoded"
-
-    return $json
+    $result = boxApiCall -env $env -method $method -resource $resource -Verbose
+    return $result
 }
 
 function boxGetAliases()
@@ -63,24 +50,30 @@ function boxGetAliases()
     (
         [parameter(Mandatory=$false)]
          [ValidateLength(1,100)]
-         [String]$name=(boxGetDefaultEnv),
-        [parameter(Mandatory=$true)]
+         [String]$env=(boxGetDefaultEnv),
+        [parameter(Mandatory=$false)]
          [ValidateLength(1,100)]
-         [String]$userid
+         [String]$userid,
+        [parameter(Mandatory=$false)]
+         [ValidateLength(1,100)]
+         [String]$username
     )
 
+    if ($userid)
+    {
+        $resource = '/users/' + $userid + '/email_aliases'
+    } elseif ($username)
+    {
+        $results = boxGetUser -username $username -name $env
+    }
+    else
+    {
+        throw ("Must Supply a username or a userid")
+    }
+
     $method = 'Get'
-    $access_token = boxGetAccessToken -name $name
+    
 
-    $resource = '/users/' + $userid + '/email_aliases'
-
-    $uri = $mybox.ApiBase + $resource
-    $header = New-Object System.Collections.Hashtable
-    $_c = $header.add('Authorization',('Bearer ' + ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($access_token )))))
-
-    Write-Verbose ($header.Authorization)
-
-    $json = Invoke-RestMethod -Method $method -Uri $uri -Headers $header -Verbose -ContentType "application/x-www-form-urlencoded"
-
-    return $json
+    $result = boxApiCall -env $env -method $method -resource $resource -Verbose
+    return $result
 }

@@ -193,7 +193,18 @@ function boxNewOAuthAccessToken()
     }
     catch
     {
-        throw ($_.ErrorDetails.Message)
+        $errMessage = ConvertFrom-Json ($_.ErrorDetails.Message) -ErrorAction SilentlyContinue
+        if ($errMessage.error = 'invalid_grant')
+        {
+            throw ($errMessage.error + ": " + $errMessage.error_description)
+        } else {
+            throw ($_.ErrorDetails.Message)
+        }
+    }
+    finally
+    {
+        Remove-Variable -Name refresh_token
+        Remove-Variable -Name client_secret
     }
     return $json
 }
@@ -269,8 +280,6 @@ function boxCreateEnv()
         $envBoxReg = $envBoxReg.OpenSubKey($_,$true)
     }
 
-    $mybox.Env.Add($name,(New-Object System.Collections.Hashtable))
-
     try
     {
         $code = boxGetOauthGrantCode -client_id $client_id
@@ -303,8 +312,6 @@ function boxCreateEnv()
     $envBoxReg.SetValue('client_id', $client_id, $rvk::String)
     $envBoxReg.SetValue('token_type', $refresh.token_type, $rvk::String)
     $envBoxReg.SetValue('expires_in', $refresh.expires_in, $rvk::String)
-    $myBox.Env[$name]['access_ticks'] = $ts.Ticks
-    $myBox.Env[$name]['expires_in'] = $refresh.expires_in
     
     if ($thumbPrint)
     {
@@ -320,10 +327,6 @@ function boxCreateEnv()
     {
         $encSecret = boxEncryptSecrets -plainSecret $refresh.$s -envBoxReg $envBoxReg -SecretName $s
         $envBoxReg.SetValue($s, $encSecret, $rvk::String)
-        if ($s = 'access_token')
-        {
-            $myBox.Env[$name]['access_token'] = $encSecret
-        }
     }
     
     $envBoxReg.Close()
@@ -406,7 +409,7 @@ function boxDecrpytSecrets()
     {
         Write-Verbose ('Fetch of secure string ' + $SecretName + ' from stash in progress..')
         #$secSecret = ($mybox.Env[($envBoxReg.GetValue('name'))].$SecretName)
-        $secSecret = ConvertTo-SecureString -string ($envBoxReg.GetValue($SecretName))
+        $secSecret = ConvertTo-SecureString -string ($mybox.Env[($envBoxReg.GetValue('name'))].$SecretName)
     } else {
         Write-Verbose ('Fetch of secure string ' + $SecretName + ' from Reg key in progress..')
         #$secSecret = ($envBoxReg.GetValue($SecretName))
@@ -436,8 +439,17 @@ function boxGetEnv()
         throw ("No env by the name of: " + $name)
     }
 
+    if (! ($mybox.Env[$name]) )
+    {
+        $mybox.Env.Add($name,(New-Object System.Collections.Hashtable))
+    }
+    
+
     $envBoxReg = $myBoxReg.OpenSubKey($name,$true)
     $envBoxReg = $envBoxReg.OpenSubKey($_,$true)
+    $myBox.Env[$name]['access_ticks'] = $envBoxReg.GetValue('access_ticks')
+    $myBox.Env[$name]['expires_in'] = $envBoxReg.GetValue('expires_in')
+    $myBox.Env[$name]['access_token'] = $envBoxReg.GetValue('access_token')
     
     return $envBoxReg
 }
@@ -457,7 +469,7 @@ function boxGetAccessToken()
       Optional string of the desired name of your environment configuration, default used if empty
      
      .Example
-      boxGetAccessToken -name highvalue
+      boxGetAccessToken -env highvalue
                    
      .LINK
       https://box-content.readme.io/docs/oauth-20
@@ -466,10 +478,10 @@ function boxGetAccessToken()
     (
     [parameter(Mandatory=$false)]
      [ValidateLength(1,100)]
-     [String]$name=(boxGetDefaultEnv)
+     [String]$env=(boxGetDefaultEnv)
     )
     
-    $envBoxReg = boxGetEnv -name $name
+    $envBoxReg = boxGetEnv -name $env
     $rvk = [Microsoft.Win32.RegistryValueKind]
     $envName = ($envBoxReg.GetValue('name'))
 
@@ -482,8 +494,8 @@ function boxGetAccessToken()
 
     if ( $mybox.Env[$envName] )
     {
-        $ts = $mybox.Env[$envName].access_ticks
-        $expires_in = $mybox.Env[$envName].expires_in
+        $ts = Get-Date ([convert]::ToInt64( $mybox.Env[$envName].access_ticks, 10 ))
+        $expires_in = ([convert]::ToInt32($mybox.Env[$envName].expires_in, 10))
     } else {
         $ts = Get-Date ([convert]::ToInt64( $envBoxReg.GetValue('access_ticks'), 10 ))
         $expires_in = ([convert]::ToInt32( $envBoxReg.GetValue('expires_in'), 10 ))
@@ -495,41 +507,198 @@ function boxGetAccessToken()
     {
         $access_token = boxDecrpytSecrets -SecretName access_token -envBoxReg $envBoxReg
     } else {
-        $refresh_token = boxDecrpytSecrets -SecretName refresh_token -envBoxReg $envBoxReg
-        $client_secret = boxDecrpytSecrets -SecretName client_secret -envBoxReg $envBoxReg
-        $ts = Get-Date
         try
         {
-            $refresh = boxNewOAuthAccessToken -client_id $envBoxReg.GetValue('client_id') `
-            -client_secret ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($client_secret))) `
-            -refresh_token ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($refresh_token)))
+            $refresh_token = boxDecrpytSecrets -SecretName refresh_token -envBoxReg $envBoxReg
+            $client_secret = boxDecrpytSecrets -SecretName client_secret -envBoxReg $envBoxReg
+            $ts = Get-Date
+            try
+            {
+                $refresh = boxNewOAuthAccessToken -client_id $envBoxReg.GetValue('client_id') `
+                -client_secret ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($client_secret))) `
+                -refresh_token ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($refresh_token)))
+            }
+            catch
+            {
+                throw ($_.Exception.Message)
+            }
+            finally
+            {
+                Remove-Variable -Name client_secret
+                Remove-Variable -Name refresh_token
+            }
+
+            #update access key in the reg and stash
+            $access_token = boxEncryptSecrets -plainSecret $refresh.access_token -envBoxReg $envBoxReg -SecretName access_token
+            $refresh_token = boxEncryptSecrets -plainSecret $refresh.refresh_token -envBoxReg $envBoxReg -SecretName refresh_token
+
+            $envBoxReg.SetValue('access_token', $access_token, $rvk::String)
+            $access_token = ""
+            $envBoxReg.SetValue('access_ticks', $ts.Ticks, $rvk::String)
+            $envBoxReg.SetValue('expires_in', $refresh.expires_in, $rvk::String)
+            #update the refresh ticks value to
+            $envBoxReg.SetValue('refresh_token', $refresh_token, $rvk::String)
+            $envBoxReg.SetValue('refresh_ticks', $ts.Ticks, $rvk::String)
+            
+            $envBoxReg.Close()
+            Remove-Variable -Name envBoxReg -ErrorAction SilentlyContinue -Force
+            $envBoxReg = boxGetEnv -name $envName
+
+            $access_token = boxDecrpytSecrets -SecretName access_token -envBoxReg $envBoxReg
         }
         catch
         {
             throw ($_.Exception.Message)
         }
-        Remove-Variable -Name client_secret
-        Remove-Variable -Name refresh_token
-
-        #update access key in the reg and stash
-        $access_token = boxEncryptSecrets -plainSecret $refresh.access_token -envBoxReg $envBoxReg -SecretName access_token
-    
-        if (! ($mybox.Env[$envName]))
+        finally
         {
-            $mybox.Env[$envName] = New-Object System.Collections.Hashtable
+            Remove-Variable -Name refresh_token -ErrorAction SilentlyContinue -Force
+            Remove-Variable -Name client_secret -ErrorAction SilentlyContinue -Force
         }
-
-        $envBoxReg.SetValue('access_token', $access_token, $rvk::String)
-        $envBoxReg.SetValue('access_ticks', $ts.Ticks, $rvk::String)
-        $envBoxReg.SetValue('expires_in', $refresh.expires_in, $rvk::String)
-        $mybox.Env[$envName].access_token = $access_token
-        $mybox.Env[$envName].access_ticks = $ts.Ticks
-        $mybox.Env[$envName].expires_in = $refresh.expires_in
-        #update the refresh ticks value to
-        $envBoxReg.SetValue('refresh_ticks', $ts.Ticks, $rvk::String)
-
-        $access_token = boxDecrpytSecrets -SecretName access_token -envBoxReg $envBoxReg        
     }
 
     return $access_token
+}
+
+function boxApiCall()
+{
+    param
+    (
+        [parameter(Mandatory=$false)]
+         [string]$env = (boxGetDefaultEnv),
+        [parameter(Mandatory=$true)]
+         [String]$method,
+        [parameter(Mandatory=$true)]
+         [String]$resource,
+        [parameter(Mandatory=$false)]
+         [Object]$body = @{},
+        [parameter(Mandatory=$false)]
+         [int]$limit = 250,
+        [parameter(Mandatory=$false)]
+         [int]$offset = 0,
+        [parameter(Mandatory=$false)]
+         [array]$priors = (New-Object System.Collections.ArrayList) 
+    )
+
+    $headers = New-Object System.Collections.Hashtable
+    $access_token = boxGetAccessToken -env $env
+    $_c = $headers.add('Authorization',('Bearer ' + ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($access_token )))))
+    
+    $_c = $headers.add('Accept-Charset','ISO-8859-1,utf-8')
+    $_c = $headers.add('Accept-Language','en-US')
+    $_c = $headers.add('Accept-Encoding','deflate,gzip')
+
+    foreach ($alt in $altHeaders.Keys)
+    {
+        $_c = $headers.Add($alt,$altHeaders[$alt])
+    }
+
+    #ContentType "application/x-www-form-urlencoded"
+    [string]$encoding = "application/json"
+
+    $rParts = $resource.Split("?")
+    if ($rParts.Count -eq 1)
+    {
+        $joiner = "?"
+    } else {
+        $joiner = "&"
+    }
+    if (! ($resource.Contains("limit=")) )
+    {
+        $resource = $resource + $joiner + "limit=" + $limit + "&offset=" + $offset
+    }
+    
+
+    $URI = $mybox.ApiBase + $resource
+    $request = [System.Net.HttpWebRequest]::CreateHttp($URI)
+    $request.Method = $method
+    if ($oktaVerbose) { Write-Host '[' $request.Method $request.RequestUri ']' -ForegroundColor Cyan}
+
+    $request.Accept = $encoding
+    $request.UserAgent = "Box-PSModule/1.0"
+
+    $request.AutomaticDecompression = @([System.Net.DecompressionMethods]::Deflate, [System.Net.DecompressionMethods]::GZip)
+    
+    foreach($key in $headers.keys)
+    {
+        $request.Headers.Add($key, $headers[$key])
+    }
+ 
+    if ( ($method -eq "POST") -or ($method -eq "PUT") )
+    {
+        $postData = ConvertTo-Json $body
+        if ($oktaVerbose) { Write-Host $postData -ForegroundColor Cyan }
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($postData)
+        $request.ContentType = $encoding
+        $request.ContentLength = $bytes.Length
+                 
+        [System.IO.Stream]$outputStream = [System.IO.Stream]$request.GetRequestStream()
+        $outputStream.Write($bytes,0,$bytes.Length)
+        $outputStream.Close()
+        Remove-Variable -Name outputStream
+    }
+ 
+    try
+    {
+        [System.Net.HttpWebResponse]$response = $request.GetResponse()
+
+        $sr = New-Object System.IO.StreamReader($response.GetResponseStream())
+        $txt = $sr.ReadToEnd()
+        $sr.Close()
+        
+        try
+        {
+            $psobj = ConvertFrom-Json -InputObject $txt
+        }
+        catch
+        {
+            Write-Error $txt
+            throw "Json Exception"
+        }
+    }
+    catch [Net.WebException]
+    { 
+        [System.Net.HttpWebResponse]$response = $_.Exception.Response
+        $sr = New-Object System.IO.StreamReader($response.GetResponseStream())
+        $txt = $sr.ReadToEnd()
+        $sr.Close()
+        Write-Warning ($txt)
+        throw ($_.Exception.Message)
+    }
+    catch
+    {
+        throw ($_.Exception.Message)
+    }
+    finally
+    {
+        $response.Close()
+        $response.Dispose()
+    }
+
+    #paged response?
+    if ($psobj.limit)
+    {
+        Write-Verbose ("We've recieved a potentially paged result")
+        Write-Verbose ("We got total count: " + $psobj.total_count.ToString())
+        Write-Verbose ("our limit was: " + $psobj.limit.ToString())
+        Write-Verbose ("our offset was: " + $psobj.offset.ToString())
+        Write-Verbose ("our count this itiration was: " + $psobj.entries.Count.ToString())
+
+        #stuff what we just got into our priors container
+        $priors = $priors + $psobj.entries
+        #is there more left?
+        if ( $psobj.total_count -gt ($psobj.limit + $psobj.offset))
+        {
+            Write-Verbose ($psobj.total_count.ToString() + " is greater than what we've got so far " +  ($psobj.limit + $psobj.offset).ToString())
+            $newOffset = $limit + $offset
+            Write-Verbose ("Fetch another: " + $limit + " Starting at " + $newOffset)
+            $resource = $resource.Replace(("limit=" + $offset),("limit=" + $newOffset))
+            boxApiCall -env $env -method $method -resource $resource -limit $limit -offset $newOffset
+        }
+        $results = $priors
+    } else {
+        $results = $psobj.entries
+    }
+
+    return $results
 }
