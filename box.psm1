@@ -596,23 +596,26 @@ function boxApiCall()
     #ContentType "application/x-www-form-urlencoded"
     [string]$encoding = "application/json"
 
-    $rParts = $resource.Split("?")
-    if ($rParts.Count -eq 1)
+    if ($method.ToLower() -eq 'get')
     {
-        $joiner = "?"
-    } else {
-        $joiner = "&"
-    }
-    if (! ($resource.Contains("limit=")) )
-    {
-        $resource = $resource + $joiner + "limit=" + $limit + "&offset=" + $offset
+        $rParts = $resource.Split("?")
+        if ($rParts.Count -eq 1)
+        {
+            $joiner = "?"
+        } else {
+            $joiner = "&"
+        }
+        if (! ($resource.Contains("limit=")) )
+        {
+            $resource = $resource + $joiner + "limit=" + $limit + "&offset=" + $offset
+        }
     }
     
 
     $URI = $mybox.ApiBase + $resource
     $request = [System.Net.HttpWebRequest]::CreateHttp($URI)
     $request.Method = $method
-    if ($oktaVerbose) { Write-Host '[' $request.Method $request.RequestUri ']' -ForegroundColor Cyan}
+    Write-Verbose ('[' + $request.Method + " " + $request.RequestUri + ']')
 
     $request.Accept = $encoding
     $request.UserAgent = "Box-PSModule/1.0"
@@ -626,8 +629,8 @@ function boxApiCall()
  
     if ( ($method -eq "POST") -or ($method -eq "PUT") )
     {
-        $postData = ConvertTo-Json $body
-        if ($oktaVerbose) { Write-Host $postData -ForegroundColor Cyan }
+        $postData = ConvertTo-Json $body -Compress -Depth 10
+        Write-Verbose ( $postData )
         $bytes = [System.Text.Encoding]::UTF8.GetBytes($postData)
         $request.ContentType = $encoding
         $request.ContentLength = $bytes.Length
