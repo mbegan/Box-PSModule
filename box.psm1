@@ -573,9 +573,9 @@ function boxApiCall()
         [parameter(Mandatory=$false)]
          [Object]$body = @{},
         [parameter(Mandatory=$false)]
-         [int]$limit = 250,
+         [int]$limit=255,
         [parameter(Mandatory=$false)]
-         [int]$offset = 0,
+         [int]$offset=0,
         [parameter(Mandatory=$false)]
          [array]$priors = (New-Object System.Collections.ArrayList)
     )
@@ -588,10 +588,6 @@ function boxApiCall()
     $_c = $headers.add('Accept-Language','en-US')
     $_c = $headers.add('Accept-Encoding','deflate,gzip')
 
-    foreach ($alt in $altHeaders.Keys)
-    {
-        $_c = $headers.Add($alt,$altHeaders[$alt])
-    }
 
     #ContentType "application/x-www-form-urlencoded"
     [string]$encoding = "application/json"
@@ -605,12 +601,11 @@ function boxApiCall()
         } else {
             $joiner = "&"
         }
-        if (! ($resource.Contains("limit=")) )
+        if (! $resource.Contains("limit=") )
         {
             $resource = $resource + $joiner + "limit=" + $limit + "&offset=" + $offset
         }
     }
-    
 
     $URI = $mybox.ApiBase + $resource
     $request = [System.Net.HttpWebRequest]::CreateHttp($URI)
@@ -626,7 +621,9 @@ function boxApiCall()
     {
         $request.Headers.Add($key, $headers[$key])
     }
- 
+
+    Write-Verbose $request.Headers['Authorization']
+    
     if ( ($method -eq "POST") -or ($method -eq "PUT") )
     {
         $postData = ConvertTo-Json $body -Compress -Depth 10
@@ -681,26 +678,20 @@ function boxApiCall()
     #paged response?
     if ($psobj.limit)
     {
-        Write-Verbose ("We've recieved a potentially paged result")
-        Write-Verbose ("We got total count: " + $psobj.total_count.ToString())
-        Write-Verbose ("our limit was: " + $psobj.limit.ToString())
-        Write-Verbose ("our offset was: " + $psobj.offset.ToString())
-        Write-Verbose ("our count this itiration was: " + $psobj.entries.Count.ToString())
-
-        #stuff what we just got into our priors container
         $priors = $priors + $psobj.entries
-        #is there more left?
         if ( $psobj.total_count -gt ($psobj.limit + $psobj.offset))
         {
-            Write-Verbose ($psobj.total_count.ToString() + " is greater than what we've got so far " +  ($psobj.limit + $psobj.offset).ToString())
+            Write-Verbose ("The total number of entries: " + $psobj.total_count.ToString() + " is greater than the: " +  ($psobj.limit + $psobj.offset).ToString() + "  we have retrieved so far" )
             $newOffset = $limit + $offset
-            Write-Verbose ("Fetch another: " + $limit + " Starting at " + $newOffset)
             $resource = $resource.Replace(("limit=" + $offset),("limit=" + $newOffset))
             boxApiCall -env $env -method $method -resource $resource -limit $limit -offset $newOffset
         }
         $results = $priors
-    } else {
+    } elseif ($psobj.entries)
+    {
         $results = $psobj.entries
+    } else {
+        $results = $psobj
     }
 
     return $results
