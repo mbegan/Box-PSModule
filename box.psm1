@@ -577,7 +577,7 @@ function boxApiCall()
         [parameter(Mandatory=$false)]
          [int]$offset = 0,
         [parameter(Mandatory=$false)]
-         [array]$priors = (New-Object System.Collections.ArrayList) 
+         [array]$priors = (New-Object System.Collections.ArrayList)
     )
 
     $headers = New-Object System.Collections.Hashtable
