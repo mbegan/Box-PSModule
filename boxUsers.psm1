@@ -22,7 +22,7 @@ function boxGetUser()
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$false)]
-         [int]$userid,
+         [String]$userid,
         [parameter(Mandatory=$false)]
          [ValidateLength(1,100)]
          [String]$username
@@ -51,7 +51,7 @@ function boxGetAliases()
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$false)]
-         [int]$userid,
+         [String]$userid,
         [parameter(Mandatory=$false)]
          [ValidateLength(1,100)]
          [String]$username
@@ -87,7 +87,7 @@ function boxAddAlias()
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$true)]
-         [int]$userid,
+         [String]$userid,
         [parameter(Mandatory=$true)]
          [ValidateLength(1,254)]
          [string]$alias
@@ -111,9 +111,9 @@ function boxDeleteAlias()
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$true)]
-         [int]$userid,
+         [String]$userid,
         [parameter(Mandatory=$true)]
-         [int]$aliasid,
+         [String]$aliasid,
         [parameter(Mandatory=$false)]
          [ValidateLength(1,254)]
          [string]$alias
@@ -135,7 +135,7 @@ function boxUpdateUser()
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$true)]
-         [int]$userid,
+         [String]$userid,
         [parameter(Mandatory=$true)]
          [ValidateSet('job_title','phone','address','timezone','language','name')]
          [string]$attribute,
