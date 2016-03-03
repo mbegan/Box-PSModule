@@ -682,11 +682,14 @@ function boxApiCall()
         if ( $psobj.total_count -gt ($psobj.limit + $psobj.offset))
         {
             Write-Verbose ("The total number of entries: " + $psobj.total_count.ToString() + " is greater than the: " +  ($psobj.limit + $psobj.offset).ToString() + "  we have retrieved so far" )
-            $newOffset = $limit + $offset
-            $resource = $resource.Replace(("limit=" + $offset),("limit=" + $newOffset))
+            $newOffset = ($limit + $offset)
+            $resource = $resource.Replace(("offset=" + $offset),("offset=" + $newOffset))
             boxApiCall -env $env -method $method -resource $resource -limit $limit -offset $newOffset
         }
         $results = $priors
+    } elseif ($psobj.total_count -eq 0)
+    {
+        $results = $psobj.entries
     } elseif ($psobj.entries)
     {
         $results = $psobj.entries
