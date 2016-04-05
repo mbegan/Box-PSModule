@@ -24,7 +24,6 @@ Import-Module Box
    ```
 6. Run the boxCreateEnv cmdlet (see cmdlet documentation for more detail)
     #####It is important to note: The access code generated in this process is only valid for 30 seconds
-    As such it is imperitive that you return the the resulting URL to back to powershell quickly
 
    ``` powershell
 boxCreateEnv -name <name> -client_id <your_clientid> -client_secret <your_client_secret>
