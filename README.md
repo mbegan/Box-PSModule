@@ -13,8 +13,10 @@ This is a basic Box API Powershell Wrapper Module intended to expose the capabil
    ``` powershell
 Write-Host $env:PSModulePath
     ```
-3. Register your App in box [best detailed setup] (https://box-content.readme.io/docs/oauth-20)
+3. Register your App in box, [read great details on this step here] (https://box-content.readme.io/docs/oauth-20)
+
     #####If your box org has restricted apps make sure your allow your app!
+
 4. Import the module
 
    ``` powershell
