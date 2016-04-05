@@ -83,7 +83,7 @@ status          : active
 job_title       : VP of Slacken
 phone           : 
 address         : 
-avatar_url      : https://varian.app.box.com/api/avatar/large/900000002
+avatar_url      : https://your.app.box.com/api/avatar/large/900000002
 
 type            : user
 id              : 900000003
@@ -100,14 +100,14 @@ status          : active
 job_title       : Maven of Mystery
 phone           : +1 800 876 5353
 address         : 
-avatar_url      : https://varian.app.box.com/api/avatar/large/900000003
+avatar_url      : https://your.app.box.com/api/avatar/large/900000003
 ```
 
 ####Get a single user based on box user id
 ``` powershell
 boxGetUser -userid 262115333
 ```
-This will return a singular user based on the id provided, exception thrown if userid isn't found
+This will return a singular user object based on the id provided, exception thrown if userid isn't found
 
 ```
 type            : user
@@ -125,5 +125,61 @@ status          : active
 job_title       : Maven of Mystery
 phone           : +1 800 876 5353
 address         : 
-avatar_url      : https://varian.app.box.com/api/avatar/large/900000003
+avatar_url      : https://your.app.box.com/api/avatar/large/900000003
+```
+
+####Update a user attribute
+``` powershell
+boxUpdateUser -userid 900000003 -attribute job_title -value 'Director of indirection'
+```
+This will return the modified user object based on the input provided, an exception will be thrown if encountered
+
+```
+type            : user
+id              : 900000003
+name            : Jade Doe
+login           : jdoe2@your.com
+created_at      : 2016-01-05T15:37:59-08:00
+modified_at     : 2016-04-04T16:02:38-07:00
+language        : en
+timezone        : America/Los_Angeles
+space_amount    : 1E+15
+space_used      : 836170585
+max_upload_size : 16106127360
+status          : active
+job_title       : Director of indirection
+phone           : +1 800 876 5353
+address         : 
+avatar_url      : https://your.app.box.com/api/avatar/large/900000003
+```
+
+###Get Alias's associated with a user
+``` powershell
+boxGetAliases -userid 900000003
+```
+This will return a collection of email_alias objects for the userid provided
+
+```
+type         : email_alias
+id           : 9000001
+is_confirmed : True
+email        : jade.doe@your.com
+
+type         : email_alias
+id           : 9000002
+is_confirmed : True
+email        : jaded.maden@your.com
+```
+
+###Get Alias's associated with a user
+``` powershell
+boxAddAlias -userid 900000003 -alias 'Director.of.Indirection@varian.com'
+```
+This will the email_alias object created based on the inputs of the command
+
+```
+type         : email_alias
+id           : 9000003
+is_confirmed : True
+email        : Director.of.Indirection@your.com
 ```
