@@ -34,5 +34,8 @@ boxCreateEnv -name <name> -client_id <your_clientid> -client_secret <your_client
 Visit: https://app.box.com/api/oauth2/authorize?response_type=code&client_id=<your_clientid>&state=<arbitrary_guid>
 Paste the resulting URL here: http://localhost/?state=<arbitrary_guid>&code=<your_access_code>
    ```
-7. 
-8. 
+
+After the initial setup a registry key will be created in the invoking users reg hive (HKLM not HKCU) as such no elevated privs required. Sensitive values are encrypted using the DPAPI, if you are especially security conscious create the env and include the -thumbprint directive along with a thumbprint for your favorite personal asymetric keypair.
+
+I've only wrapped user and group endpoints thus far, i'll add more as i need more, if you have a specific need request away.
+10. If you h
