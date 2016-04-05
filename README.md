@@ -48,7 +48,7 @@ I've only wrapped user and group endpoints thus far, i'll add more as i need mor
    ``` powershell
 boxGetUser -username jdoe
    ```
-This will return an array of box user objects that match a username of jdoe (jdoe, jdoe1 and jdoe3)
+This will return an array of box user objects that match a username of jdoe (jdoe, jdoe2 and jdoe3)
 
 ```
 type            : user
@@ -85,6 +85,31 @@ phone           :
 address         : 
 avatar_url      : https://varian.app.box.com/api/avatar/large/900000002
 
+type            : user
+id              : 900000003
+name            : Jade Doe
+login           : jdoe2@your.com
+created_at      : 2016-01-05T15:37:59-08:00
+modified_at     : 2016-04-04T16:02:38-07:00
+language        : en
+timezone        : America/Los_Angeles
+space_amount    : 1E+15
+space_used      : 836170585
+max_upload_size : 16106127360
+status          : active
+job_title       : Maven of Mystery
+phone           : +1 800 876 5353
+address         : 
+avatar_url      : https://varian.app.box.com/api/avatar/large/900000003
+```
+
+####Get a single user based on box user id
+``` powershell
+boxGetUser -userid 262115333
+```
+This will return a singular user based on the id provided, exception thrown if userid isn't found
+
+```
 type            : user
 id              : 900000003
 name            : Jade Doe
