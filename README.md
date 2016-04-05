@@ -47,7 +47,6 @@ I've only wrapped user and group endpoints thus far, i'll add more as i need mor
 ####Search for users based on a username pattern
    ``` powershell
 boxGetUser -username jdoe
-    ```
-
+   ```
     This will return an array of box user objects that match a username of jdoe (jdoe, jdoe1 and jdoe3)
 
