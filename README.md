@@ -42,7 +42,6 @@ After the initial setup a registry key will be created in the invoking users reg
 I've only wrapped user and group endpoints thus far, i'll add more as i need more, if you have a specific need request away.
 
 #Usage
-##Getting users
 
 ####Search for users based on a username pattern
    ``` powershell
@@ -153,7 +152,7 @@ address         :
 avatar_url      : https://your.app.box.com/api/avatar/large/900000003
 ```
 
-###Get Alias's associated with a user
+####Get Alias's associated with a user
 ``` powershell
 boxGetAliases -userid 900000003
 ```
@@ -171,7 +170,7 @@ is_confirmed : True
 email        : jaded.maden@your.com
 ```
 
-###Get Alias's associated with a user
+####Get Alias's associated with a user
 ``` powershell
 boxAddAlias -userid 900000003 -alias 'Director.of.Indirection@varian.com'
 ```
