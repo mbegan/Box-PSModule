@@ -19,8 +19,8 @@ Write-Host $env:PSModulePath
    ``` powershell
 Import-Module Box
    ```
-
-6. Run the boxCreateEnv cmdlet
+6. Run the boxCreateEnv cmdlet (see cmdlet documentation for more detail)
    ``` powershell
 boxCreateEnv -name <name> -client_id <your_clientid> -client_secret <your_client_secret>
    ```
+
