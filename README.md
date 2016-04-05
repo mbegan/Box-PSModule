@@ -160,25 +160,32 @@ This will return a collection of email_alias objects for the userid provided
 
 ```
 type         : email_alias
-id           : 9000001
+id           : 7000001
 is_confirmed : True
 email        : jade.doe@your.com
 
 type         : email_alias
-id           : 9000002
+id           : 7000002
 is_confirmed : True
 email        : jaded.maden@your.com
 ```
 
-####Get Alias's associated with a user
+####Create an alias for a user
 ``` powershell
-boxAddAlias -userid 900000003 -alias 'Director.of.Indirection@varian.com'
+boxAddAlias -userid 900000003 -alias 'Director.of.Indirection@your.com'
 ```
-This will the email_alias object created based on the inputs of the command
+This will return the email_alias object created based on the inputs of the command
+*Users will recieve emails when you do this*
 
 ```
 type         : email_alias
-id           : 9000003
+id           : 7000003
 is_confirmed : True
 email        : Director.of.Indirection@your.com
 ```
+
+####Delete an alias for a given user
+``` powershell
+boxDeleteAlias -userid 900000003 -aliasid 7000003
+```
+an empty response on success, an error thrown if encountered
