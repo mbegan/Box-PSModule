@@ -42,8 +42,11 @@ After the initial setup a registry key will be created in the invoking users reg
 I've only wrapped user and group endpoints thus far, i'll add more as i need more, if you have a specific need request away.
 
 #Usage
-##Get A user
+##Getting users
 
-    ``` powershell
-these are powershell commands
+####Search for users based on a username pattern
+   ``` powershell
+boxGetUser -username jdoe
     ```
+    This will return an array of box user objects that match a username of jdoe (jdoe, jdoe1 and jdoe3)
+    
