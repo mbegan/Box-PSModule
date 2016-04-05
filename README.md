@@ -20,15 +20,19 @@ Write-Host $env:PSModulePath
 Import-Module Box
    ```
 6. Run the boxCreateEnv cmdlet (see cmdlet documentation for more detail)
+    #It is important to note that the access code generated in this process is only valid for 30 seconds
+    As such it is imperitive that you return the the resulting URL to back to powershell quickly
 
    ``` powershell
 boxCreateEnv -name <name> -client_id <your_clientid> -client_secret <your_client_secret>
+
+1 - Open a browser
+2 - Login to Box as the user you want to make API calls as
+3 - Paste the following URL into that browser window
+4 - Click 'Grant Access to Box'
+5 - Paste the resulting URL into the powershell prompt
+Visit: https://app.box.com/api/oauth2/authorize?response_type=code&client_id=<your_clientid>&state=<arbitrary_guid>
+Paste the resulting URL here: http://localhost/?state=<arbitrary_guid>&code=<your_access_code>
    ```
-    1. asdf
-    2. asdf
-    3. asdf
-
-7. then do
-    1.asdf
-
+7. 
 8. 
