@@ -26,7 +26,7 @@ Import-Module Box
     #####It is important to note: The access code generated in this process is only valid for 30 seconds
 
    ``` powershell
-boxCreateEnv -name <name> -client_id <your_clientid> -client_secret <your_client_secret>
+boxCreateEnv -name <env_name> -client_id <your_clientid> -client_secret <your_client_secret>
 
 1 - Open a browser
 2 - Login to Box as the user you want to make API calls as
@@ -48,5 +48,57 @@ I've only wrapped user and group endpoints thus far, i'll add more as i need mor
    ``` powershell
 boxGetUser -username jdoe
    ```
-    This will return an array of box user objects that match a username of jdoe (jdoe, jdoe1 and jdoe3)
+This will return an array of box user objects that match a username of jdoe (jdoe, jdoe1 and jdoe3)
 
+```
+type            : user
+id              : 900000001
+name            : John Doe
+login           : jdoe@your.tld
+created_at      : 2016-03-17T12:11:05-07:00
+modified_at     : 2016-04-04T15:03:37-07:00
+language        : en
+timezone        : America/Los_Angeles
+space_amount    : 1E+15
+space_used      : 94223
+max_upload_size : 16106127360
+status          : active
+job_title       : Chief Lacky Officer
+phone           : 
+address         : 
+avatar_url      : https://your.app.box.com/api/avatar/large/900000001
+
+type            : user
+id              : 900000002
+name            : Jane Doe
+login           : jdoe2@your.com
+created_at      : 2016-03-09T18:21:46-08:00
+modified_at     : 2016-03-16T14:19:53-07:00
+language        : en
+timezone        : America/Los_Angeles
+space_amount    : 1E+15
+space_used      : 0
+max_upload_size : 16106127360
+status          : active
+job_title       : VP of Slacken
+phone           : 
+address         : 
+avatar_url      : https://varian.app.box.com/api/avatar/large/900000002
+
+type            : user
+id              : 900000003
+name            : Jade Doe
+login           : jdoe2@your.com
+created_at      : 2016-01-05T15:37:59-08:00
+modified_at     : 2016-04-04T16:02:38-07:00
+language        : en
+timezone        : America/Los_Angeles
+space_amount    : 1E+15
+space_used      : 836170585
+max_upload_size : 16106127360
+status          : active
+job_title       : Maven of Mystery
+phone           : +1 800 876 5353
+address         : 
+avatar_url      : https://varian.app.box.com/api/avatar/large/900000003
+```
