@@ -5,8 +5,8 @@ This is a basic Box API Powershell Wrapper Module intended to expose the capabil
 
 --------
 
-### Getting Started
-#Installation:
+# Getting Started
+##Installation:
 1. Download the module (git clone or download the zip)
 2. Place the module in your PSModulePath hint [Read more about PSModulePath Here] (https://msdn.microsoft.com/en-us/library/dd878324%28v=vs.85%29.aspx)
 
@@ -40,3 +40,10 @@ Paste the resulting URL here: http://localhost/?state=<arbitrary_guid>&code=<you
 After the initial setup a registry key will be created in the invoking users reg hive (not HKLM but HKCU:\Software\boxAPIPSModule) as such no elevated privs are required. Sensitive values are encrypted using the DPAPI, if you are especially security conscious create the env and include the -thumbprint directive along with a thumbprint for your favorite personal asymetric keypair.
 
 I've only wrapped user and group endpoints thus far, i'll add more as i need more, if you have a specific need request away.
+
+#Usage
+##Get A user
+
+    ``` powershell
+    these are powershell commands
+    ```
