@@ -24,7 +24,8 @@ Import-Module Box
    ``` powershell
 boxCreateEnv -name <name> -client_id <your_clientid> -client_secret <your_client_secret>
    ```
-   a. asdf
-   b. xyz
+    a. asdf
+    b. xyz
+    c.
 7. then do
 8. 
