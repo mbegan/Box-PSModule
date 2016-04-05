@@ -6,7 +6,7 @@ This is a basic Box API Powershell Wrapper Module intended to expose the capabil
 --------
 
 # Getting Started
-##Installation:
+##Installation/Configuration:
 1. Download the module (git clone or download the zip)
 2. Place the module in your PSModulePath hint [Read more about PSModulePath Here] (https://msdn.microsoft.com/en-us/library/dd878324%28v=vs.85%29.aspx)
 
@@ -45,5 +45,5 @@ I've only wrapped user and group endpoints thus far, i'll add more as i need mor
 ##Get A user
 
     ``` powershell
-    these are powershell commands
+these are powershell commands
     ```
