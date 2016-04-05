@@ -175,7 +175,8 @@ email        : jaded.maden@your.com
 boxAddAlias -userid 900000003 -alias 'Director.of.Indirection@your.com'
 ```
 This will return the email_alias object created based on the inputs of the command
-*Users will recieve emails when you do this*
+
+_Users will recieve emails when you do this_
 
 ```
 type         : email_alias
@@ -189,3 +190,5 @@ email        : Director.of.Indirection@your.com
 boxDeleteAlias -userid 900000003 -aliasid 7000003
 ```
 an empty response on success, an error thrown if encountered
+
+_Users will recieve emails when you do this_
