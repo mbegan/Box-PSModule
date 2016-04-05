@@ -13,14 +13,15 @@ This is a basic Box API Powershell Wrapper Module intended to expose the capabil
    ``` powershell
 Write-Host $env:PSModulePath
     ```
-3. Create your App in box (details fourthcoming)
+3. Register your App in box [best detailed setup] (https://box-content.readme.io/docs/oauth-20)
+    #####If your box org has restricted apps make sure your allow your app!
 4. Import the module
 
    ``` powershell
 Import-Module Box
    ```
 6. Run the boxCreateEnv cmdlet (see cmdlet documentation for more detail)
-    ####It is important to note: The access code generated in this process is only valid for 30 seconds
+    #####It is important to note: The access code generated in this process is only valid for 30 seconds
     As such it is imperitive that you return the the resulting URL to back to powershell quickly
 
    ``` powershell
@@ -35,6 +36,6 @@ Visit: https://app.box.com/api/oauth2/authorize?response_type=code&client_id=<yo
 Paste the resulting URL here: http://localhost/?state=<arbitrary_guid>&code=<your_access_code>
    ```
 
-After the initial setup a registry key will be created in the invoking users reg hive (HKLM not HKCU) as such no elevated privs required. Sensitive values are encrypted using the DPAPI, if you are especially security conscious create the env and include the -thumbprint directive along with a thumbprint for your favorite personal asymetric keypair.
+After the initial setup a registry key will be created in the invoking users reg hive (not HKLM but HKCU:\Software\boxAPIPSModule) as such no elevated privs are required. Sensitive values are encrypted using the DPAPI, if you are especially security conscious create the env and include the -thumbprint directive along with a thumbprint for your favorite personal asymetric keypair.
 
 I've only wrapped user and group endpoints thus far, i'll add more as i need more, if you have a specific need request away.
