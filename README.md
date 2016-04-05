@@ -20,7 +20,11 @@ Write-Host $env:PSModulePath
 Import-Module Box
    ```
 6. Run the boxCreateEnv cmdlet (see cmdlet documentation for more detail)
+
    ``` powershell
 boxCreateEnv -name <name> -client_id <your_clientid> -client_secret <your_client_secret>
    ```
-
+   a. asdf
+   b. xyz
+7. then do
+8. 
