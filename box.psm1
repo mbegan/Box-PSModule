@@ -560,6 +560,37 @@ function boxGetAccessToken()
     return $access_token
 }
 
+function boxThrowError()
+{
+    param
+    (
+        [parameter(Mandatory=$true)][String]$text
+    )
+
+    try
+    {
+        $boxSays = ConvertFrom-Json -InputObject $text
+    }
+    catch
+    {
+        throw $text
+    }
+    <# Can't decide what to throw here... #>
+    <# Highly subject to change... #>
+    if ($boxSays.context_info.errors.Count -gt 1)
+    {
+        #interesting
+    }
+    
+    $errorString = ($boxSays.status.ToString() + " " + $boxSays.code.ToString() + " (" + $boxSays.message + ") :" + $boxSays.context_info.errors[0].reason + "; " + $boxSays.context_info.errors[0].name + "; " + $boxSays.context_info.errors[0].message)
+    $formatError = New-Object System.FormatException -ArgumentList ($errorString,$Error[1])
+    
+    #@@@ too bad this doesn't actually work    
+    $formatError.HelpLink = $boxSays.help_url
+    $formatError.Source = $text
+    throw $formatError
+}
+
 function boxApiCall()
 {
     param
@@ -662,8 +693,7 @@ function boxApiCall()
         $sr = New-Object System.IO.StreamReader($response.GetResponseStream())
         $txt = $sr.ReadToEnd()
         $sr.Close()
-        Write-Warning ($txt)
-        throw ($_.Exception.Message)
+        boxThrowError -text $txt
     }
     catch
     {
