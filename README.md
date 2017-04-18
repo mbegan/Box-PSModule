@@ -49,7 +49,7 @@ boxGetUser -username jdoe
 ```
 This will return an array of box user objects that match a username of jdoe (jdoe, jdoe2 and jdoe3)
 
-```powershell
+```
 type            : user
 id              : 900000001
 name            : John Doe
@@ -108,7 +108,7 @@ boxGetUser -userid 262115333
 ```
 This will return a singular user object based on the id provided, exception thrown if userid isn't found
 
-```powershell
+```
 type            : user
 id              : 900000003
 name            : Jade Doe
@@ -133,7 +133,7 @@ boxUpdateUser -userid 900000003 -attribute job_title -value 'Director of indirec
 ```
 This will return the modified user object based on the input provided, an exception will be thrown if encountered
 
-```powershell
+```
 type            : user
 id              : 900000003
 name            : Jade Doe
@@ -158,7 +158,7 @@ boxGetAliases -userid 900000003
 ```
 This will return a collection of email_alias objects for the userid provided
 
-```powershell
+```
 type         : email_alias
 id           : 7000001
 is_confirmed : True
@@ -175,7 +175,7 @@ email        : jaded.maden@your.com
 boxAddAlias -userid 900000003 -alias 'Director.of.Indirection@your.com'
 ```
 This will return the email_alias object created based on the inputs of the command
-```powershell
+```
 type         : email_alias
 id           : 7000003
 is_confirmed : True
