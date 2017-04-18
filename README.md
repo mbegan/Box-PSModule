@@ -6,26 +6,26 @@ This is a basic Box API Powershell Wrapper Module intended to expose the capabil
 --------
 
 # Getting Started
-##Installation/Configuration:
+## Installation/Configuration:
 1. Download the module (git clone or download the zip)
 2. Place the module in your PSModulePath hint [Read more about PSModulePath Here] (https://msdn.microsoft.com/en-us/library/dd878324%28v=vs.85%29.aspx)
 
-   ``` powershell
+```powershell
 Write-Host $env:PSModulePath
-    ```
+```
 3. Register your App in box, [read great details on this step here] (https://box-content.readme.io/docs/oauth-20)
 
-    #####If your box org has restricted apps make sure your allow your app!
+    #### If your box org has restricted apps make sure your allow your app!
 
 4. Import the module
 
-   ``` powershell
+```powershell
 Import-Module Box
-   ```
+```
 6. Run the boxCreateEnv cmdlet (see cmdlet documentation for more detail)
-    #####It is important to note: The access code generated in this process is only valid for 30 seconds
+    #### It is important to note: The access code generated in this process is only valid for 30 seconds
 
-   ``` powershell
+```powershell
 boxCreateEnv -name <env_name> -client_id <your_clientid> -client_secret <your_client_secret>
 
 1 - Open a browser
@@ -35,21 +35,21 @@ boxCreateEnv -name <env_name> -client_id <your_clientid> -client_secret <your_cl
 5 - Paste the resulting URL into the powershell prompt
 Visit: https://app.box.com/api/oauth2/authorize?response_type=code&client_id=<your_clientid>&state=<arbitrary_guid>
 Paste the resulting URL here: http://localhost/?state=<arbitrary_guid>&code=<your_access_code>
-   ```
+```
 
 After the initial setup a registry key will be created in the invoking users reg hive (not HKLM but HKCU:\Software\boxAPIPSModule) as such no elevated privs are required. Sensitive values are encrypted using the DPAPI, if you are especially security conscious create the env and include the -thumbprint directive along with a thumbprint for your favorite personal asymetric keypair.
 
 I've only wrapped user and group endpoints thus far, i'll add more as i need more, if you have a specific need request away.
 
-#Usage
+# Usage
 
-####Search for users based on a username pattern
-   ``` powershell
+### Search for users based on a username pattern
+``` powershell
 boxGetUser -username jdoe
-   ```
+```
 This will return an array of box user objects that match a username of jdoe (jdoe, jdoe2 and jdoe3)
 
-```
+```powershell
 type            : user
 id              : 900000001
 name            : John Doe
@@ -102,13 +102,13 @@ address         :
 avatar_url      : https://your.app.box.com/api/avatar/large/900000003
 ```
 
-####Get a single user based on box user id
-``` powershell
+### Get a single user based on box user id
+```powershell
 boxGetUser -userid 262115333
 ```
 This will return a singular user object based on the id provided, exception thrown if userid isn't found
 
-```
+```powershell
 type            : user
 id              : 900000003
 name            : Jade Doe
@@ -127,13 +127,13 @@ address         :
 avatar_url      : https://your.app.box.com/api/avatar/large/900000003
 ```
 
-####Update a user attribute
-``` powershell
+### Update a user attribute
+```powershell
 boxUpdateUser -userid 900000003 -attribute job_title -value 'Director of indirection'
 ```
 This will return the modified user object based on the input provided, an exception will be thrown if encountered
 
-```
+```powershell
 type            : user
 id              : 900000003
 name            : Jade Doe
@@ -152,13 +152,13 @@ address         :
 avatar_url      : https://your.app.box.com/api/avatar/large/900000003
 ```
 
-####Get Alias's associated with a user
-``` powershell
+### Get Alias's associated with a user
+```powershell
 boxGetAliases -userid 900000003
 ```
 This will return a collection of email_alias objects for the userid provided
 
-```
+```powershell
 type         : email_alias
 id           : 7000001
 is_confirmed : True
@@ -170,20 +170,20 @@ is_confirmed : True
 email        : jaded.maden@your.com
 ```
 
-####Create an alias for a user
-``` powershell
+### Create an alias for a user
+```powershell
 boxAddAlias -userid 900000003 -alias 'Director.of.Indirection@your.com'
 ```
 This will return the email_alias object created based on the inputs of the command
-```
+```powershell
 type         : email_alias
 id           : 7000003
 is_confirmed : True
 email        : Director.of.Indirection@your.com
 ```
 
-####Delete an alias for a given user
-``` powershell
+### Delete an alias for a given user
+```powershell
 boxDeleteAlias -userid 900000003 -aliasid 7000003
 ```
 an empty response on success, an error thrown if encountered
