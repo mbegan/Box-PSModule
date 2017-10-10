@@ -1,19 +1,19 @@
 # Box-PSModule Documentation
 ======================
 
-This is a basic Box API Powershell Wrapper Module intended to expose the capabilities of the Box Content API in a secure way.  The module includes basic Oauth2 handlers including initial authorization mechanism as well as refresh and access token managment. Read the Box Contenet API [here] (https://box-content.readme.io/reference).
+This is a basic Box API Powershell Wrapper Module intended to expose the capabilities of the Box Content API in a secure way.  The module includes basic Oauth2 handlers including initial authorization mechanism as well as refresh and access token managment. Read the Box Contenet API [here](https://box-content.readme.io/reference).
 
 --------
 
 # Getting Started
 ## Installation/Configuration:
 1. Download the module (git clone or download the zip)
-2. Place the module in your PSModulePath hint [Read more about PSModulePath Here] (https://msdn.microsoft.com/en-us/library/dd878324%28v=vs.85%29.aspx)
+2. Place the module in your PSModulePath hint [Read more about PSModulePath Here](https://msdn.microsoft.com/en-us/library/dd878324%28v=vs.85%29.aspx)
 
 ```powershell
 Write-Host $env:PSModulePath
 ```
-3. Register your App in box, [read great details on this step here] (https://box-content.readme.io/docs/oauth-20)
+3. Register your App in box, [read great details on this step here](https://box-content.readme.io/docs/oauth-20)
 
     #### If your box org has restricted apps make sure your allow your app!
 
