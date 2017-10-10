@@ -14,6 +14,16 @@ This is a basic Box API Powershell Wrapper Module intended to expose the capabil
 Write-Host $env:PSModulePath
 ```
 3. Register your App in box, [read great details on this step here](https://box-content.readme.io/docs/oauth-20)
+   1. Make sure the `redirect_uri` on the application you configure is setup to be; http://localhost or http://127.0.0.1
+      1. The expection is that _#4_ of boxCreateEnv (described in _Step 6_ below) is to end up on a "page not found" error in your browser
+      2. You are going to copy the URL of that "page not found" error and paste it back into powershell command
+      3. This URL contains a short lived access code that is used to retrieve your initial OAuth Tokens
+      4. For subsequent calls made to interact with the Box API the Access Token is used
+         1. The Access Token is only valid for ~1 hour at a time
+         2. Whenever the Access Token expires the Refresh Token is used to retrieve a new Access Token
+      5. The Refesh Token has a lifetime of it's own
+         1. I don't recall what it is as i write this, suffice it to say it will expire or can be revoked... 
+         2. If / When this happens you need to re-run boxCreateEnv
 
     #### If your box org has restricted apps make sure your allow your app!
 
