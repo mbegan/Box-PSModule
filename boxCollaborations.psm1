@@ -6,14 +6,16 @@
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$false)]
-         [String]$collabid="0"
+         [String]$collabid="0",
+        [parameter(Mandatory=$false)]
+         [String]$asUserId=$false
     )
 
     $method = 'GET'
 
     $resource = '/collaborations/' + $collabid
 
-    $result = boxApiCall -env $env -method $method -resource $resource
+    $result = boxApiCall -env $env -method $method -resource $resource -asUserId $asUserId
     return $result
 }
 
@@ -39,7 +41,9 @@ function boxCreateCollaboration()
          [ValidateSet('editor','viewer','previewer','uploader','previewer uploader','viewer uploader','co-owner','owner')]
          [string]$role='co-owner',
         [parameter(Mandatory=$false)]
-         [string]$fields='Please enjoy our collaboration together...'
+         [string]$fields='Please enjoy our collaboration together...',
+        [parameter(Mandatory=$false)]
+         [String]$asUserId=$false
     )
 
     $method = 'POST'
@@ -53,7 +57,7 @@ function boxCreateCollaboration()
                "fields" = $fields
              }
 
-    $result = boxApiCall -env $env -method $method -resource $resource -body $body
+    $result = boxApiCall -env $env -method $method -resource $resource -body $body -asUserId $asUserId
     return $result
 }
 
@@ -65,14 +69,16 @@ function boxDeleteCollaboration()
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$true)]
-         [String]$collabid
+         [String]$collabid,
+        [parameter(Mandatory=$false)]
+         [String]$asUserId=$false
     )
 
     $method = 'DELETE'
 
     $resource = '/collaborations/' + $collabid
 
-    $result = boxApiCall -env $env -method $method -resource $resource
+    $result = boxApiCall -env $env -method $method -resource $resource -asUserId $asUserId
     return $result
 }
 

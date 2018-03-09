@@ -606,6 +606,8 @@ function boxApiCall()
         [parameter(Mandatory=$false)]
          [int]$limit=255,
         [parameter(Mandatory=$false)]
+         [String]$asUserId=$false,
+        [parameter(Mandatory=$false)]
          [int]$offset=0,
         [parameter(Mandatory=$false)]
          [array]$priors = (New-Object System.Collections.ArrayList)
@@ -614,6 +616,10 @@ function boxApiCall()
     $headers = New-Object System.Collections.Hashtable
     $access_token = boxGetAccessToken -env $env
     $_c = $headers.add('Authorization',('Bearer ' + ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($access_token )))))
+    if ($asUserId)
+    {
+        $_c = $headers.add('As-User', $asUserId.ToString())
+    }    
     
     $_c = $headers.add('Accept-Charset','ISO-8859-1,utf-8')
     $_c = $headers.add('Accept-Language','en-US')

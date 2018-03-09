@@ -6,14 +6,16 @@
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$false)]
-         [String]$folderid="0"
+         [String]$folderid="0",
+         [parameter(Mandatory=$false)]
+         [String]$asUserId=$false
     )
 
     $method = 'Get'
 
     $resource = '/folders/' + $folderid
 
-    $result = boxApiCall -env $env -method $method -resource $resource
+    $result = boxApiCall -env $env -method $method -resource $resource -asUserId $asUserId
     return $result
 }
 
@@ -26,14 +28,16 @@ function boxGetFolderItems()
          [ValidateLength(1,100)]
          [String]$env=(boxGetDefaultEnv),
         [parameter(Mandatory=$false)]
-         [String]$folderid="0"
+         [String]$folderid="0",
+        [parameter(Mandatory=$false)]
+         [String]$asUserId=$false
     )
 
     $method = 'Get'
 
     $resource = '/folders/' + $folderid +'/items'
 
-    $result = boxApiCall -env $env -method $method -resource $resource
+    $result = boxApiCall -env $env -method $method -resource $resource -asUserId $asUserId
     return $result
 }
 
@@ -47,7 +51,9 @@ function boxCreateFolder()
         [parameter(Mandatory=$false)]
          [String]$parentid="0",
         [parameter(Mandatory=$true)]
-         [String]$FolderName
+         [String]$FolderName,
+        [parameter(Mandatory=$false)]
+          [String]$asUserId=$false
     )
 
     $method = 'Post'
@@ -56,7 +62,7 @@ function boxCreateFolder()
 
     $body = @{ "name" = $FolderName; "parent" = @{ "id" = $parentid }}
 
-    $result = boxApiCall -env $env -method $method -resource $resource -body $body
+    $result = boxApiCall -env $env -method $method -resource $resource -body $body -asUserId $asUserId
     return $result
 }
 
@@ -74,7 +80,9 @@ function boxUpdateFolder()
         [parameter(Mandatory=$false)]
          [String]$tags,
         [parameter(Mandatory=$false)]
-         [String]$description
+         [String]$description,
+        [parameter(Mandatory=$false)]
+         [String]$asUserId=$false
     )
 
     $method = 'Put'
@@ -97,6 +105,6 @@ function boxUpdateFolder()
 
     Write-Verbose ($body)
 
-    $result = boxApiCall -env $env -method $method -resource $resource -body $body
+    $result = boxApiCall -env $env -method $method -resource $resource -body $body -asUserId $asUserId
     return $result
 }
